@@ -210,7 +210,6 @@ def invPerm(perm):
         inv[s] = i
     return inv
 
-radii_sribb=[0.4, 0.30, 0.35, 0.39, 0.12]# these value are set after a few trials 
 
 def createChords(ends, colors, labels, row_sum, layout):
     ideograms=[]
@@ -224,7 +223,7 @@ def createChords(ends, colors, labels, row_sum, layout):
                                 y=z.imag,
                                 mode='lines',
                                 line=Line(color=colors[k], shape='spline', width=0.25),
-                                text=labels[k]+'<br>'+'{:d}'.format(row_sum[k]), 
+                                text=labels[k]+'<br>'+'{:f}'.format(row_sum[k]), 
                                 hoverinfo='text'
                                 )
                         )
@@ -243,7 +242,7 @@ def createChords(ends, colors, labels, row_sum, layout):
         layout['shapes'].append(make_ideo_shape(path,'rgb(150,150,150)' , colors[k]))
     return ideograms
 
-def createRibbons(matrix, labels, ribbon_ends, idx_sort, layout, ideo_colors, ribbon_color):
+def createRibbons(matrix, labels, ribbon_ends, idx_sort, layout, ideo_colors, ribbon_color, radii_sribb):
 
 
     ribbon_info=[]
@@ -264,7 +263,7 @@ def createRibbons(matrix, labels, ribbon_ends, idx_sort, layout, ideo_colors, ri
                                         ideo_colors[k], radius=radii_sribb[k])) 
                 z=0.9*np.exp(1j*(l[0]+l[1])/2)
                 #the text below will be displayed when hovering the mouse over the ribbon
-                text=labels[k]+' commented on '+ '{:d}'.format(matrix[k][k])+' of '+ 'themselves Fb posts',
+                text=labels[k]+' {:f}'.format(matrix[k][k])+' of '+ 'themselves',
                 ribbon_info.append(Scatter(x=[z.real],
                                         y=[z.imag],
                                         mode='markers',
@@ -279,11 +278,11 @@ def createRibbons(matrix, labels, ribbon_ends, idx_sort, layout, ideo_colors, ri
                 zf=0.9*np.exp(1j*(r[0]+r[1])/2)
                 #texti and textf are the strings that will be displayed when hovering the mouse 
                 #over the two ribbon ends
-                texti=labels[k]+' commented on '+ '{:d}'.format(matrix[k][j])+' of '+\
-                    labels[j]+ ' Fb posts',
+                texti=labels[k]+' {:f}'.format(matrix[k][j])+' of '+\
+                    labels[j],
                 
-                textf=labels[j]+' commented on '+ '{:d}'.format(matrix[j][k])+' of '+\
-                labels[k]+ ' Fb posts',
+                textf=labels[j]+' {:f}'.format(matrix[j][k])+' of '+\
+                labels[k],
                 ribbon_info.append(Scatter(x=[zi.real],
                                         y=[zi.imag],
                                         mode='markers',
@@ -306,7 +305,7 @@ def createRibbons(matrix, labels, ribbon_ends, idx_sort, layout, ideo_colors, ri
                 layout['shapes'].append(make_ribbon(l, r, 'rgb(175,175,175)' , ribbon_color[k][j]))
     return ribbon_info
 
-def chord(matrix, labels, ideo_colors):
+def chord(matrix, labels, ideo_colors, radii_sribb):
 
     L, M=matrix.shape
     row_sum=np.sum(matrix, axis=1)#.tolist() #[np.sum(matrix[k,:]) for k in range(L)]
@@ -332,7 +331,7 @@ def chord(matrix, labels, ideo_colors):
     layout=make_layout('Chord diagram', 400)
 
     ideograms=createChords(ideo_ends, ideo_colors, labels, row_sum, layout)
-    ribbon_info = createRibbons(matrix, labels, ribbon_ends, idx_sort, layout, ideo_colors, ribbon_color)    
+    ribbon_info = createRibbons(matrix, labels, ribbon_ends, idx_sort, layout, ideo_colors, ribbon_color,radii_sribb)    
     data = Data(ideograms+ribbon_info)
     fig = Figure(data=data, layout=layout)
 
